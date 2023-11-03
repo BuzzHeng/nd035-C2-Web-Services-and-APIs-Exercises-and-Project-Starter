@@ -1,9 +1,9 @@
 package com.udacity.pricing.domain.price;
 
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Entity;
 import java.math.BigDecimal;
 
 /**
@@ -11,7 +11,6 @@ import java.math.BigDecimal;
  */
 @Entity
 public class Price {
-
     private String currency;
     private BigDecimal price;
     @Id
@@ -26,7 +25,6 @@ public class Price {
         this.price = price;
         this.vehicleId = vehicleId;
     }
-
     public String getCurrency() {
         return currency;
     }

@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +30,11 @@ import org.springframework.web.bind.annotation.RestController;
  * Implements a REST-based controller for the Vehicles API.
  */
 @RestController
+@ApiResponses(value = {
+        @ApiResponse(code=400, message = "This is a bad request, please follow the API documentation for the proper request format."),
+        @ApiResponse(code=401, message = "Due to security constraints, your access request cannot be authorized. "),
+        @ApiResponse(code=500, message = "The server is down. Please make sure that the vehicle api is running.")
+})
 @RequestMapping("/cars")
 class CarController {
 
@@ -63,7 +70,8 @@ class CarController {
          * TODO: Use the `assembler` on that car and return the resulting output.
          *   Update the first line as part of the above implementing.
          */
-        return assembler.toResource(new Car());
+        Car car = carService.findById(id);
+        return assembler.toResource(car);
     }
 
     /**
@@ -72,14 +80,15 @@ class CarController {
      * @return response that the new vehicle was added to the system
      * @throws URISyntaxException if the request contains invalid fields or syntax
      */
-    @PostMapping
+    @PostMapping(consumes = "application/json")
     ResponseEntity<?> post(@Valid @RequestBody Car car) throws URISyntaxException {
         /**
          * TODO: Use the `save` method from the Car Service to save the input car.
          * TODO: Use the `assembler` on that saved car and return as part of the response.
          *   Update the first line as part of the above implementing.
          */
-        Resource<Car> resource = assembler.toResource(new Car());
+        Car savedCar = carService.save(car);
+        Resource<Car> resource = assembler.toResource(savedCar);
         return ResponseEntity.created(new URI(resource.getId().expand().getHref())).body(resource);
     }
 
@@ -97,7 +106,9 @@ class CarController {
          * TODO: Use the `assembler` on that updated car and return as part of the response.
          *   Update the first line as part of the above implementing.
          */
-        Resource<Car> resource = assembler.toResource(new Car());
+        car.setId(id);
+        Car updatedCar = carService.save(car);
+        Resource<Car> resource = assembler.toResource(updatedCar);
         return ResponseEntity.ok(resource);
     }
 
@@ -111,6 +122,7 @@ class CarController {
         /**
          * TODO: Use the Car Service to delete the requested vehicle.
          */
+        carService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

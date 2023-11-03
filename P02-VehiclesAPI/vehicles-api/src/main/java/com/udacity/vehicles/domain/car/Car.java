@@ -13,6 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import io.swagger.annotations.ApiModelProperty;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -26,16 +28,20 @@ public class Car {
 
     @Id
     @GeneratedValue
+    @ApiModelProperty(hidden = true)
     private Long id;
 
     @CreatedDate
+    @ApiModelProperty(hidden = true)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
+    @ApiModelProperty(hidden = true)
     private LocalDateTime modifiedAt;
 
     @NotNull
     @Enumerated(EnumType.STRING)
+    @ApiModelProperty(example = "USED")
     private Condition condition;
 
     @Valid
@@ -47,6 +53,7 @@ public class Car {
     private Location location = new Location(0d, 0d);
 
     @Transient
+    @ApiModelProperty(hidden = true)
     private String price;
 
     public Long getId() {
